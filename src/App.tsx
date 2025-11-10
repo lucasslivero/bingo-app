@@ -3,6 +3,7 @@ import { toast } from "sonner";
 import { BingoBoard } from "./components/BingoBoard";
 import BingoCage from "./components/BingoCage";
 import { Header } from "./components/Header";
+import { ResetButton } from "./components/ResetButton";
 import { Button } from "./components/ui/Button";
 import { Input } from "./components/ui/Input";
 
@@ -100,14 +101,7 @@ function App() {
 						Sortear Número
 					</Button>
 
-					<Button
-						onClick={resetGame}
-						disabled={spinning}
-						type="button"
-						className="px-4 py-2 rounded-md border-2 border-foreground font-semibold transition-all bg-destructive"
-					>
-						Reiniciar
-					</Button>
+					<ResetButton spinning={spinning} drawnNumbers={drawnNumbers} resetGame={resetGame} />
 
 					<div className="flex flex-col mt-4 text-lg text-center bg-white rounded-lg p-4 shadow-md">
 						<strong className="text-blue-700">Últimos números sorteados:</strong>
