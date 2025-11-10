@@ -34,7 +34,7 @@ export default function BingoCage({ spinning, setSpinning, number, speakNumber }
 				setTimeout(() => {
 					setShowBall(true);
 					speakNumber(number);
-					setTimeout(() => handleBallAnimationEnd(), 1500);
+					setTimeout(() => handleBallAnimationEnd(), 2500);
 				}, 2500);
 			} else {
 				videoRef.current.pause();

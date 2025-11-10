@@ -40,7 +40,7 @@ export function ResetButton({ resetGame, spinning, drawnNumbers }: IResetButton)
 				<AlertDialogFooter>
 					<AlertDialogCancel>Cancelar</AlertDialogCancel>
 					<AlertDialogAction variant={"destructive"} onClick={resetGame}>
-						Continue
+						Continuar
 					</AlertDialogAction>
 				</AlertDialogFooter>
 			</AlertDialogContent>

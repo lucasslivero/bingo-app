@@ -6,12 +6,13 @@ import { Header } from "./components/Header";
 import { ResetButton } from "./components/ResetButton";
 import { Button } from "./components/ui/Button";
 import { Input } from "./components/ui/Input";
+import { getLetterForNumber } from "./lib/utils";
 
 function speakNumber(n: number) {
 	if ("speechSynthesis" in window) {
-		const utter = new window.SpeechSynthesisUtterance(n.toString());
-		utter.lang = "pt-BR";
-		window.speechSynthesis.speak(utter);
+		const letter = getLetterForNumber(n);
+		window.speechSynthesis.speak(new window.SpeechSynthesisUtterance(letter));
+		window.speechSynthesis.speak(new window.SpeechSynthesisUtterance(`${n}`));
 	}
 }
 
