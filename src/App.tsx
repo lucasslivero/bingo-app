@@ -1,10 +1,10 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
+import { BingoBoard } from "./components/BingoBoard";
 import BingoCage from "./components/BingoCage";
-import { ThemeSwitcher } from "./components/ThemeSwitcher";
+import { Header } from "./components/Header";
 import { Button } from "./components/ui/Button";
 import { Input } from "./components/ui/Input";
-import { cn } from "./lib/utils";
 
 function speakNumber(n: number) {
 	if ("speechSynthesis" in window) {
@@ -20,10 +20,6 @@ function App() {
 	const [currentDrawn, setCurrentDraw] = useState(-1);
 	const [latestNumbers, setLatestNumbers] = useState<number[]>([]);
 	const [drawnNumbers, setDrawnNumbers] = useState<Set<number>>(new Set());
-
-	const boardRows = useMemo(() => {
-		return Array.from({ length: Math.ceil(maxNumber / 10) }, (_, index) => index);
-	}, [maxNumber]);
 
 	function resetGame() {
 		setLatestNumbers([]);
@@ -62,38 +58,9 @@ function App() {
 
 	return (
 		<main className="min-h-screen flex flex-col">
-			<header className="sticky top-0 flex h-[60px] items-center justify-between border-b-2 bg-default px-10 py-2">
-				<img src="/public/logo.png" className="w-14 rounded" alt="App logo" />
-				<div className="flex items-baseline gap-4">
-					<h1 className="text-3xl font-bold -tracking-wider">Binko App</h1>
-				</div>
-
-				<ThemeSwitcher />
-			</header>
+			<Header />
 			<div className="flex flex-1 items-center justify-center gap-8 p-4 h-full w-full">
-				<div className="space-y-3">
-					{boardRows.map((row) => (
-						<div key={`left-${row}`} className="flex gap-2 justify-center">
-							{[1, 2, 3, 4, 5].map((col) => {
-								const num = row * 10 + col;
-								const isDrawn = drawnNumbers.has(num);
-								return (
-									<div
-										key={num}
-										className={cn(
-											"w-11 h-11 rounded-full flex items-center justify-center text-sm font-bold transition-all",
-											isDrawn &&
-												"bg-foreground shadow-lg border-4 border-green-500 text-background",
-											!isDrawn && "text-gray-400",
-										)}
-									>
-										{num}
-									</div>
-								);
-							})}
-						</div>
-					))}
-				</div>
+				<BingoBoard maxNumber={maxNumber} drawnNumbers={drawnNumbers} position="LEFT" />
 				<div className="flex flex-col gap-8">
 					<div className="flex flex-col font-bold text-blue-700">
 						<div className="flex">
@@ -149,29 +116,7 @@ function App() {
 						</span>
 					</div>
 				</div>
-				<div className="space-y-3">
-					{boardRows.map((row) => (
-						<div key={`right-${row}`} className="flex gap-2 justify-center">
-							{[6, 7, 8, 9, 10].map((col) => {
-								const num = row * 10 + col;
-								const isDrawn = drawnNumbers.has(num);
-								return (
-									<div
-										key={num}
-										className={cn(
-											"w-11 h-11 rounded-full flex items-center justify-center text-sm font-bold transition-all",
-											isDrawn &&
-												"bg-foreground shadow-lg border-2 border-green-500 text-background",
-											!isDrawn && "text-gray-400",
-										)}
-									>
-										{num}
-									</div>
-								);
-							})}
-						</div>
-					))}
-				</div>
+				<BingoBoard maxNumber={maxNumber} drawnNumbers={drawnNumbers} position="RIGHT" />
 			</div>
 		</main>
 	);
