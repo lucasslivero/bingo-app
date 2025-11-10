@@ -1,21 +1,30 @@
-import BingoVideo from "@/assets/bingo-2.mp4";
+import {
+	type Dispatch,
+	type SetStateAction,
+	useCallback,
+	useEffect,
+	useRef,
+	useState,
+} from "react";
+import BingoVideo from "@/assets/bingo-cage.mp4";
 import { cn } from "@/lib/utils";
-import { type Dispatch, type SetStateAction, useEffect, useRef, useState } from "react";
 import { BingoBall } from "./BingoBall";
 
 type BingoSpin = {
 	spinning: boolean;
 	number: number;
 	setSpinning: Dispatch<SetStateAction<boolean>>;
+	speakNumber: (number: number) => void;
 };
 
-export default function BingoCage({ spinning, setSpinning, number }: BingoSpin) {
+export default function BingoCage({ spinning, setSpinning, number, speakNumber }: BingoSpin) {
 	const videoRef = useRef<HTMLVideoElement>(null);
 	const [showBall, setShowBall] = useState(false);
-	function handleBallAnimationEnd() {
+
+	const handleBallAnimationEnd = useCallback(() => {
 		setSpinning(false);
 		setShowBall(false);
-	}
+	}, [setSpinning]);
 
 	useEffect(() => {
 		if (videoRef.current) {
@@ -24,12 +33,14 @@ export default function BingoCage({ spinning, setSpinning, number }: BingoSpin) 
 				videoRef.current.play();
 				setTimeout(() => {
 					setShowBall(true);
-				}, 200);
+					speakNumber(number);
+					setTimeout(() => handleBallAnimationEnd(), 1500);
+				}, 2500);
 			} else {
 				videoRef.current.pause();
 			}
 		}
-	}, [spinning]);
+	}, [spinning, handleBallAnimationEnd, speakNumber, number]);
 
 	return (
 		<div className="relative w-full h-48">
@@ -37,14 +48,14 @@ export default function BingoCage({ spinning, setSpinning, number }: BingoSpin) 
 				ref={videoRef}
 				src={BingoVideo}
 				loop
-				muted
+				muted={showBall}
 				playsInline
 				className={cn(
-					"w-full h-full object-contain transition-opacity duration-500 opacity-100",
-					showBall && "opacity-10",
+					"w-full h-full object-contain transition-opacity duration-500 opacity-100 rounded-4xl",
+					showBall && "opacity-30",
 				)}
 			/>
-			{showBall && <BingoBall number={number} onAnimationEnd={handleBallAnimationEnd} />}
+			{showBall && <BingoBall number={number} />}
 		</div>
 	);
 }

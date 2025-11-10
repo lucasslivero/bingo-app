@@ -118,9 +118,3 @@
 		@apply bg-background text-foreground;
 	}
 }
-
-/*  Custom Classes */
-input[type="number"].show-arrows::-webkit-inner-spin-button,
-input[type="number"].show-arrows::-webkit-outer-spin-button {
-	opacity: 1;
-}

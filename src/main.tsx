@@ -7,7 +7,7 @@ import "./index.css";
 
 createRoot(document.getElementById("root")!).render(
 	<StrictMode>
-		<ThemeProvider defaultTheme="dark" storageKey="bingo-app-theme">
+		<ThemeProvider defaultTheme="system" storageKey="bingo-app-theme">
 			<Toaster position="top-center" richColors closeButton />
 			<App />
 		</ThemeProvider>
