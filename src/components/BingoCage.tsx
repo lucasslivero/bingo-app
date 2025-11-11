@@ -7,6 +7,7 @@ import {
 	useState,
 } from "react";
 import BingoVideo from "@/assets/bingo-cage.mp4";
+import { BALL_ANIMATION_DURATION, VIDEO_ANIMATION_DURATION } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { BingoBall } from "./BingoBall";
 
@@ -34,8 +35,8 @@ export default function BingoCage({ spinning, setSpinning, number, speakNumber }
 				setTimeout(() => {
 					setShowBall(true);
 					speakNumber(number);
-					setTimeout(() => handleBallAnimationEnd(), 2500);
-				}, 2500);
+					setTimeout(() => handleBallAnimationEnd(), BALL_ANIMATION_DURATION);
+				}, VIDEO_ANIMATION_DURATION);
 			} else {
 				videoRef.current.pause();
 			}
