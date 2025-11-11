@@ -6,6 +6,7 @@ import { Header } from "./components/Header";
 import { ResetButton } from "./components/ResetButton";
 import { Button } from "./components/ui/Button";
 import { Input } from "./components/ui/Input";
+import { BALL_ANIMATION_DURATION, VIDEO_ANIMATION_DURATION } from "./lib/constants";
 import { getLetterForNumber } from "./lib/utils";
 
 function speakNumber(n: number) {
@@ -40,16 +41,18 @@ function App() {
 		do {
 			n = Math.floor(Math.random() * maxNumber) + 1;
 		} while (drawnNumbers.has(n));
-		setDrawnNumbers(drawnNumbers.add(n));
 		setCurrentDraw(n);
-		setLatestNumbers((prev) => {
-			const prevClone = [...prev];
-			if (prevClone.length === 5) {
-				prevClone.shift();
-			}
-			prevClone.push(n);
-			return prevClone;
-		});
+		setTimeout(() => {
+			setDrawnNumbers(drawnNumbers.add(n));
+			setLatestNumbers((prev) => {
+				const prevClone = [...prev];
+				if (prevClone.length === 5) {
+					prevClone.shift();
+				}
+				prevClone.push(n);
+				return prevClone;
+			});
+		}, VIDEO_ANIMATION_DURATION + BALL_ANIMATION_DURATION);
 	}
 
 	function handleMaxNumber(value: number) {

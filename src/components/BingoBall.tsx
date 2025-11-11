@@ -12,7 +12,7 @@ export function BingoBall({ number }: BingoBall) {
 			<div className="w-60 relative text-center flex justify-center">
 				<img className="relative w-full" src={BingoBallImage} alt="bingo ball number" />
 				<div className="h-full w-full flex flex-col text-8xl font-bold text-gray-800 z-10 drop-shadow-lg absolute justify-center items-center px-[30px]">
-					<span className="text-5xl">{letter}</span>
+					<span className="text-6xl">{letter}</span>
 					{number}
 				</div>
 			</div>

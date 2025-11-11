@@ -31,9 +31,15 @@ Traditional bingo divides numbers into 5 groups, each corresponding to a letter 
 | **G** | 46 - 60 |
 | **O** | 61 - 90 |
 
-### Layout
+## Layout
+
+### web version
 
 ![alt Page layout](layout.png)
+
+### Mobile version
+
+![alt Page layout mobile](layout-mobile.png)
 
 ## 🚀 How to Use
 
@@ -63,20 +69,12 @@ npm run deploy
 
 ## 🎨 Customization
 
-### Colors
-
-You can customize colors by editing Tailwind classes:
-
-- Background: `bg-gradient-to-br from-purple-600 to-blue-600`
-- Ball: `bg-gradient-to-br from-gray-100 via-white to-gray-200`
-- Highlight: `border-green-500`
-
 ### Animation Timing
 
-Adjust the duration in `setTimeout`:
+Adjust the duration in `src/lib/constants.ts`:
 
 ```javascript
-/* Change these values (in milliseconds) => src/lib/constants.ts */
+/* Change these values (in milliseconds) */
 export const VIDEO_ANIMATION_DURATION = 2500;
 export const BALL_ANIMATION_DURATION = 2500;
 ```
