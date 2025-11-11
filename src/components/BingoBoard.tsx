@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 type IbingoBoard = {
 	maxNumber: number;
 	drawnNumbers: Set<number>;
-	position: "LEFT" | "RIGHT";
+	position?: "LEFT" | "RIGHT";
 };
 
 export function BingoBoard({ maxNumber, position, drawnNumbers }: IbingoBoard) {
@@ -18,11 +18,18 @@ export function BingoBoard({ maxNumber, position, drawnNumbers }: IbingoBoard) {
 		} else if (position === "RIGHT") {
 			return [6, 7, 8, 9, 10];
 		}
-		return [];
+		return Array.from({ length: 10 }, (_, index) => index + 1);
 	}, [position]);
 
 	return (
-		<div className="space-y-3">
+		<div
+			className={cn(
+				"space-y-3 lg:block",
+				position === "LEFT" && "hidden order-1",
+				position === "RIGHT" && "hidden order-3",
+				!position && "lg:hidden order-2",
+			)}
+		>
 			{boardRows.map((row) => (
 				<div key={`left-${row}`} className="flex gap-2 justify-center">
 					{boardRange.map((col) => {
@@ -32,9 +39,10 @@ export function BingoBoard({ maxNumber, position, drawnNumbers }: IbingoBoard) {
 							<div
 								key={num}
 								className={cn(
-									"w-11 h-11 rounded-full flex items-center justify-center text-sm font-bold transition-all",
+									"w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all",
 									isDrawn && "bg-foreground shadow-lg border-4 border-green-500 text-background",
 									!isDrawn && "text-gray-400",
+									!position && "w-8 h-8",
 								)}
 							>
 								{num}

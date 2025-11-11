@@ -61,22 +61,25 @@ function App() {
 	return (
 		<main className="min-h-screen flex flex-col">
 			<Header />
-			<div className="flex flex-1 items-center justify-center gap-8 p-4 h-full w-full">
+			<div className="flex flex-col lg:flex-row flex-1 items-center justify-center gap-8 p-4 h-full w-full">
 				<BingoBoard maxNumber={maxNumber} drawnNumbers={drawnNumbers} position="LEFT" />
-				<div className="flex flex-col gap-8">
+				<div className="flex flex-col gap-8 order-1 lg:order-2">
 					<div className="flex flex-col font-bold text-blue-700">
-						<div className="flex">
-							<h1 className="text-4xl">Roleta de Bingo 1 -</h1>
-							<Input
-								className="w-17 h-11 p-1 show-arrows text-4xl! pr-0 text-center"
-								type="number"
-								placeholder="number"
-								disabled={drawnNumbers.size > 0}
-								min={1}
-								max={90}
-								value={maxNumber}
-								onChange={(e) => handleMaxNumber(+e.target.value)}
-							/>
+						<div className="flex flex-col lg:flex-row text-4xl gap-1 items-center">
+							<h1 className="">Roleta de Bingo</h1>
+							<div className="flex gap-1">
+								<span>1-</span>
+								<Input
+									className="w-17 h-11 p-1 show-arrows text-4xl! pr-0 text-center"
+									type="number"
+									placeholder="number"
+									disabled={drawnNumbers.size > 0}
+									min={1}
+									max={90}
+									value={maxNumber}
+									onChange={(e) => handleMaxNumber(+e.target.value)}
+								/>
+							</div>
 						</div>
 						<span className="text-muted-foreground text-center">
 							Números sorteados ({drawnNumbers.size}/{maxNumber}):
@@ -112,6 +115,7 @@ function App() {
 					</div>
 				</div>
 				<BingoBoard maxNumber={maxNumber} drawnNumbers={drawnNumbers} position="RIGHT" />
+				<BingoBoard maxNumber={maxNumber} drawnNumbers={drawnNumbers} />
 			</div>
 		</main>
 	);
