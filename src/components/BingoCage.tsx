@@ -1,14 +1,7 @@
-import {
-	type Dispatch,
-	type SetStateAction,
-	useCallback,
-	useEffect,
-	useRef,
-	useState,
-} from "react";
-import BingoVideo from "@/assets/bingo-cage.mp4";
+import { AnimatePresence } from "motion/react";
+import { type Dispatch, type SetStateAction, useEffect, useRef, useState } from "react";
 import { BALL_ANIMATION_DURATION, VIDEO_ANIMATION_DURATION } from "@/lib/constants";
-import { cn } from "@/lib/utils";
+import { cn, sleep } from "@/lib/utils";
 import { BingoBall } from "./BingoBall";
 
 type BingoSpin = {
@@ -16,16 +9,24 @@ type BingoSpin = {
 	number: number;
 	setSpinning: Dispatch<SetStateAction<boolean>>;
 	speakNumber: (number: number) => void;
+	updateDrawnList: (number: number) => void;
 };
 
-export default function BingoCage({ spinning, setSpinning, number, speakNumber }: BingoSpin) {
+export default function BingoCage({
+	spinning,
+	setSpinning,
+	number,
+	speakNumber,
+	updateDrawnList,
+}: BingoSpin) {
 	const videoRef = useRef<HTMLVideoElement>(null);
 	const [showBall, setShowBall] = useState(false);
 
-	const handleBallAnimationEnd = useCallback(() => {
+	async function handleBallAnimationEnd() {
+		await sleep(BALL_ANIMATION_DURATION);
 		setSpinning(false);
 		setShowBall(false);
-	}, [setSpinning]);
+	}
 
 	useEffect(() => {
 		if (videoRef.current) {
@@ -35,19 +36,22 @@ export default function BingoCage({ spinning, setSpinning, number, speakNumber }
 				setTimeout(() => {
 					setShowBall(true);
 					speakNumber(number);
-					setTimeout(() => handleBallAnimationEnd(), BALL_ANIMATION_DURATION);
+					updateDrawnList(number);
+					if (videoRef.current) {
+						videoRef.current.pause();
+					}
 				}, VIDEO_ANIMATION_DURATION);
 			} else {
 				videoRef.current.pause();
 			}
 		}
-	}, [spinning, handleBallAnimationEnd, speakNumber, number]);
+	}, [spinning, number, speakNumber, updateDrawnList]);
 
 	return (
 		<div className="relative w-full h-48">
 			<video
 				ref={videoRef}
-				src={BingoVideo}
+				src="bingo-cage.mp4"
 				loop
 				muted={showBall}
 				playsInline
@@ -56,7 +60,9 @@ export default function BingoCage({ spinning, setSpinning, number, speakNumber }
 					showBall && "opacity-30",
 				)}
 			/>
-			{showBall && <BingoBall number={number} />}
+			<AnimatePresence>
+				{showBall && <BingoBall endAnimation={handleBallAnimationEnd} number={number} />}
+			</AnimatePresence>
 		</div>
 	);
 }

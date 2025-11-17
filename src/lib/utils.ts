@@ -13,3 +13,9 @@ export function getLetterForNumber(num: number) {
 	if (num >= 61 && num <= 90) return "O";
 	return "";
 }
+
+export function sleep(ms: number = 500) {
+	return new Promise((resolve) => {
+		setTimeout(resolve, ms);
+	});
+}

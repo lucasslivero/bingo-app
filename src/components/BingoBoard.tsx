@@ -25,13 +25,12 @@ export function BingoBoard({ maxNumber, position, drawnNumbers }: IbingoBoard) {
 		<div
 			className={cn(
 				"space-y-3 lg:block",
-				position === "LEFT" && "hidden order-1",
-				position === "RIGHT" && "hidden order-3",
-				!position && "lg:hidden order-2",
+				position === "LEFT" && "hidden",
+				position === "RIGHT" && "hidden",
 			)}
 		>
 			{boardRows.map((row) => (
-				<div key={`left-${row}`} className="flex gap-2 justify-center">
+				<div key={`left-${row}`} className="flex gap-2 lg:gap-4 justify-center">
 					{boardRange.map((col) => {
 						const num = row * 10 + col;
 						const isDrawn = drawnNumbers.has(num);
@@ -39,10 +38,9 @@ export function BingoBoard({ maxNumber, position, drawnNumbers }: IbingoBoard) {
 							<div
 								key={num}
 								className={cn(
-									"w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all",
+									"w-8 h-8 lg:w-10 lg:h-10 rounded-full flex items-center justify-center font-bold transition-all",
 									isDrawn && "bg-foreground shadow-lg border-4 border-green-500 text-background",
-									!isDrawn && "text-gray-400",
-									!position && "w-8 h-8",
+									!isDrawn && "text-gray-400 opacity-40",
 								)}
 							>
 								{num}

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { toast } from "sonner";
 import { BingoBoard } from "./components/BingoBoard";
 import BingoCage from "./components/BingoCage";
@@ -6,7 +6,6 @@ import { Header } from "./components/Header";
 import { ResetButton } from "./components/ResetButton";
 import { Button } from "./components/ui/Button";
 import { Input } from "./components/ui/Input";
-import { BALL_ANIMATION_DURATION, VIDEO_ANIMATION_DURATION } from "./lib/constants";
 import { getLetterForNumber } from "./lib/utils";
 
 function speakNumber(n: number) {
@@ -18,7 +17,7 @@ function speakNumber(n: number) {
 }
 
 function App() {
-	const [maxNumber, setMaxNumber] = useState(90);
+	const [maxNumber, setMaxNumber] = useState(75);
 	const [spinning, setSpinning] = useState(false);
 	const [currentDrawn, setCurrentDraw] = useState(-1);
 	const [latestNumbers, setLatestNumbers] = useState<number[]>([]);
@@ -42,18 +41,22 @@ function App() {
 			n = Math.floor(Math.random() * maxNumber) + 1;
 		} while (drawnNumbers.has(n));
 		setCurrentDraw(n);
-		setTimeout(() => {
-			setDrawnNumbers(drawnNumbers.add(n));
+	}
+
+	const updateDrawnList = useCallback(
+		(num: number) => {
+			setDrawnNumbers(drawnNumbers.add(num));
 			setLatestNumbers((prev) => {
 				const prevClone = [...prev];
 				if (prevClone.length === 5) {
 					prevClone.shift();
 				}
-				prevClone.push(n);
+				prevClone.push(num);
 				return prevClone;
 			});
-		}, VIDEO_ANIMATION_DURATION + BALL_ANIMATION_DURATION);
-	}
+		},
+		[drawnNumbers],
+	);
 
 	function handleMaxNumber(value: number) {
 		if (value > 0 && value <= 90) {
@@ -64,9 +67,14 @@ function App() {
 	return (
 		<main className="min-h-screen flex flex-col">
 			<Header />
-			<div className="flex flex-col lg:flex-row flex-1 items-center justify-center gap-8 p-4 h-full w-full">
-				<BingoBoard maxNumber={maxNumber} drawnNumbers={drawnNumbers} position="LEFT" />
-				<div className="flex flex-col gap-8 order-1 lg:order-2">
+			<div className="flex flex-col lg:flex-row flex-1 items-center justify-around gap-8 p-4 h-full w-full">
+				<div className="flex flex-col mt-4 text-lg text-center bg-white rounded-lg p-4 shadow-md">
+					<strong className="text-blue-700">Últimos números sorteados:</strong>
+					<span className="text-2xl font-bold text-gray-800 mt-2">
+						{latestNumbers.length > 0 ? latestNumbers.join(", ") : "-"}
+					</span>
+				</div>
+				<div className="flex flex-col gap-8">
 					<div className="flex flex-col font-bold text-blue-700">
 						<div className="flex flex-col lg:flex-row text-4xl gap-1 items-center">
 							<h1 className="">Roleta de Bingo</h1>
@@ -93,6 +101,7 @@ function App() {
 						setSpinning={setSpinning}
 						number={currentDrawn}
 						speakNumber={speakNumber}
+						updateDrawnList={updateDrawnList}
 					/>
 
 					<Button
@@ -109,15 +118,7 @@ function App() {
 					</Button>
 
 					<ResetButton spinning={spinning} drawnNumbers={drawnNumbers} resetGame={resetGame} />
-
-					<div className="flex flex-col mt-4 text-lg text-center bg-white rounded-lg p-4 shadow-md">
-						<strong className="text-blue-700">Últimos números sorteados:</strong>
-						<span className="text-2xl font-bold text-gray-800 mt-2">
-							{latestNumbers.length > 0 ? latestNumbers.join(", ") : "-"}
-						</span>
-					</div>
 				</div>
-				<BingoBoard maxNumber={maxNumber} drawnNumbers={drawnNumbers} position="RIGHT" />
 				<BingoBoard maxNumber={maxNumber} drawnNumbers={drawnNumbers} />
 			</div>
 		</main>
