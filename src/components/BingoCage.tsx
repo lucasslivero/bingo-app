@@ -1,41 +1,50 @@
 import { AnimatePresence } from "motion/react";
-import { type Dispatch, type SetStateAction, useEffect, useRef, useState } from "react";
-import { BALL_ANIMATION_DURATION, VIDEO_ANIMATION_DURATION } from "@/lib/constants";
-import { cn, sleep } from "@/lib/utils";
+import {
+	type Dispatch,
+	type SetStateAction,
+	memo,
+	useEffect,
+	useRef,
+	useState,
+} from "react";
+import { VIDEO_ANIMATION_DURATION } from "@/lib/constants";
+import { cn, speakNumber } from "@/lib/utils";
 import { BingoBall } from "./BingoBall";
 
 type BingoSpin = {
 	spinning: boolean;
 	number: number;
 	setSpinning: Dispatch<SetStateAction<boolean>>;
-	speakNumber: (number: number) => void;
 	updateDrawnList: (number: number) => void;
 };
 
-export default function BingoCage({
+function BingoCage({
 	spinning,
 	setSpinning,
 	number,
-	speakNumber,
 	updateDrawnList,
 }: BingoSpin) {
 	const videoRef = useRef<HTMLVideoElement>(null);
 	const [showBall, setShowBall] = useState(false);
 
-	async function handleBallAnimationEnd() {
-		await sleep(BALL_ANIMATION_DURATION);
-		setSpinning(false);
-		setShowBall(false);
+	async function handleBallAnimationEnd(isExit: boolean) {
+		console.log(isExit)
+		if (isExit) {
+			setSpinning(false);
+		} else {
+			await speakNumber(number);
+			setShowBall(false);
+		}
 	}
 
 	useEffect(() => {
-		if (videoRef.current) {
+		async function run() {
+			if (videoRef.current) {
 			videoRef.current.currentTime = 0;
 			if (spinning) {
 				videoRef.current.play();
-				setTimeout(() => {
+				setTimeout(async () => {
 					setShowBall(true);
-					speakNumber(number);
 					updateDrawnList(number);
 					if (videoRef.current) {
 						videoRef.current.pause();
@@ -45,7 +54,9 @@ export default function BingoCage({
 				videoRef.current.pause();
 			}
 		}
-	}, [spinning, number, speakNumber, updateDrawnList]);
+		}
+		run();
+	}, [spinning, number]);
 
 	return (
 		<div className="relative w-full h-48">
@@ -66,3 +77,5 @@ export default function BingoCage({
 		</div>
 	);
 }
+
+export default memo(BingoCage);

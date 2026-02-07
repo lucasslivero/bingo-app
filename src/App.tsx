@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { BingoBoard } from "./components/BingoBoard";
 import BingoCage from "./components/BingoCage";
@@ -6,15 +6,6 @@ import { Header } from "./components/Header";
 import { ResetButton } from "./components/ResetButton";
 import { Button } from "./components/ui/Button";
 import { Input } from "./components/ui/Input";
-import { getLetterForNumber } from "./lib/utils";
-
-function speakNumber(n: number) {
-	if ("speechSynthesis" in window) {
-		const letter = getLetterForNumber(n);
-		window.speechSynthesis.speak(new window.SpeechSynthesisUtterance(letter));
-		window.speechSynthesis.speak(new window.SpeechSynthesisUtterance(`${n}`));
-	}
-}
 
 function App() {
 	const [maxNumber, setMaxNumber] = useState(75);
@@ -22,20 +13,27 @@ function App() {
 	const [currentDrawn, setCurrentDraw] = useState(-1);
 	const [latestNumbers, setLatestNumbers] = useState<number[]>([]);
 	const [drawnNumbers, setDrawnNumbers] = useState<Set<number>>(new Set());
+	const spinningRef = useRef(false);
+
+	useEffect(() => {
+		spinningRef.current = spinning;
+	}, [spinning]);
 
 	function resetGame() {
 		setLatestNumbers([]);
 		setSpinning(false);
+		spinningRef.current = false;
 		setDrawnNumbers(new Set());
 	}
 
 	function drawNumber() {
-		if (spinning) return;
+		if (spinningRef.current) return;
 		if (drawnNumbers.size === maxNumber) {
 			toast.warning("Todos os números já foram sorteados!");
 			return;
 		}
 		setSpinning(true);
+		spinningRef.current = true;
 		let n: number;
 		do {
 			n = Math.floor(Math.random() * maxNumber) + 1;
@@ -43,26 +41,40 @@ function App() {
 		setCurrentDraw(n);
 	}
 
-	const updateDrawnList = useCallback(
-		(num: number) => {
-			setDrawnNumbers(drawnNumbers.add(num));
-			setLatestNumbers((prev) => {
-				const prevClone = [...prev];
-				if (prevClone.length === 5) {
-					prevClone.shift();
-				}
-				prevClone.push(num);
-				return prevClone;
-			});
-		},
-		[drawnNumbers],
-	);
+	const updateDrawnList = useCallback((num: number) => {
+		setDrawnNumbers((prev) => {
+			const newSet = new Set(prev);
+			newSet.add(num);
+			return newSet;
+		});
+		setLatestNumbers((prev) => {
+			const prevClone = [...prev];
+			if (prevClone.length === 5) {
+				prevClone.shift();
+			}
+			prevClone.push(num);
+			return prevClone;
+		});
+	}, []);
 
 	function handleMaxNumber(value: number) {
 		if (value > 0 && value <= 90) {
 			setMaxNumber(value);
 		}
 	}
+
+	useEffect(() => {
+		function handleKeyDown(event: KeyboardEvent) {
+			if (event.key === "Enter") {
+				drawNumber();
+			}
+		}
+
+		window.addEventListener("keydown", handleKeyDown);
+		return () => {
+			window.removeEventListener("keydown", handleKeyDown);
+		};
+	}, []);
 
 	return (
 		<main className="min-h-screen flex flex-col">
@@ -100,7 +112,6 @@ function App() {
 						spinning={spinning}
 						setSpinning={setSpinning}
 						number={currentDrawn}
-						speakNumber={speakNumber}
 						updateDrawnList={updateDrawnList}
 					/>
 

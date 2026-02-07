@@ -3,18 +3,23 @@ import { getLetterForNumber } from "@/lib/utils";
 
 type BingoBall = {
 	number: number;
-	endAnimation: () => void;
+	endAnimation: (isExit: boolean) => void;
 };
 
 export function BingoBall({ number, endAnimation }: BingoBall) {
 	const letter = getLetterForNumber(number);
+
+	function handleAnimationComplete(defenition: any) {
+		endAnimation(defenition.opacity === 0);
+	}
+
 	return (
 		<motion.div
 			initial={{ opacity: 0, scale: 0 }}
 			animate={{ opacity: 1, scale: 1 }}
 			transition={{ duration: 1, ease: "easeInOut" }}
 			exit={{ opacity: 0, scale: 0 }}
-			onAnimationComplete={endAnimation}
+			onAnimationComplete={handleAnimationComplete}
 			className="inset-0 pointer-events-none items-center justify-center z-50 absolute flex"
 		>
 			<div className="w-60 relative text-center flex justify-center">

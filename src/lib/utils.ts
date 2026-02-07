@@ -19,3 +19,19 @@ export function sleep(ms: number = 500) {
 		setTimeout(resolve, ms);
 	});
 }
+
+export function speakNumber(n: number): Promise<void> {
+	return new Promise((resolve) => {
+		if ("speechSynthesis" in window) {
+			const letter = getLetterForNumber(n);
+			const u1 = new window.SpeechSynthesisUtterance(letter);
+			const u2 = new window.SpeechSynthesisUtterance(`${n}`);
+			u2.onend = () => resolve();
+			u2.onerror = () => resolve();
+			window.speechSynthesis.speak(u1);
+			window.speechSynthesis.speak(u2);
+		} else {
+			resolve();
+		}
+	});
+}
